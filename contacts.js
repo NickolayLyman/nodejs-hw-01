@@ -68,7 +68,7 @@ function removeContact(contactId) {
     }
 
     console.log('Contact was deleted successfully');
-    console.table(contactsList);
+    listContacts();
   });
 }
 
