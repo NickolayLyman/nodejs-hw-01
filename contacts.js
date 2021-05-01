@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
+import shortid from 'shortid';
 
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
@@ -67,13 +67,13 @@ function removeContact(contactId) {
     }
 
     const contactList = JSON.parse(rawData);
-
     const filteredContacts = contactList.filter(({ id }) => id !== contactId);
 
     if (contactList.length !== filteredContacts.length) {
       fs.writeFile(contactsPath, JSON.stringify(filteredContacts), err => {
         if (err) {
           console.error(err.message);
+
           process.exit(1);
         }
       });
@@ -91,25 +91,17 @@ function addContact(name, email, phone) {
 
     const rawData = data.toString();
 
-    let contactslist;
-    let id;
-
-    if (!rawData) {
-      contactslist = [];
-      id = 1;
-    } else {
-      contactslist = JSON.parse(rawData);
-      id = uuidv4();
-    }
+    const contactlist = JSON.parse(rawData);
+    const id = shortid.generate();
 
     if (name && email && phone) {
-      contactslist.push({ id, name, email, phone });
-      fs.writeFile(contactsPath, JSON.stringify(contactslist), err => {
+      contactlist.push({ id, name, email, phone });
+      fs.writeFile(contactsPath, JSON.stringify(contactlist), err => {
         if (err) {
           console.error(err);
         }
         console.log('Contacts was added and saved successfuly');
-        console.table(contactslist);
+        console.table(contactlist);
       });
     }
   });
